@@ -33,10 +33,12 @@ csvParser().fromFile('Calculators and Sci calculators.csv')
  * @returns {Array}
  */
 function transformResult(result) {
+    //for products with multiple images, second image comes in a new row with only 3 cols filled
+    //-handle, image src & image position
     return result.map(value => {
         let transformedValue = [];
         transformedValue['Title'] = value.name;
-        transformedValue['Body (HTML)'] = value.description;
+        transformedValue['Body (HTML)'] = getDescription(value.description);
         let substrings = value.name.split(' ');
         substrings.forEach((element, index, list) => {
             list[index] = element.toLowerCase();
@@ -53,9 +55,23 @@ function transformResult(result) {
         transformedValue['Image Src'] = 'https://cdn.shopify.com/s/files/1/0031/3661/8594/products/91_L.jpg?v=1534872542';//todo
         transformedValue['Image Position'] = 1;
         transformedValue['Gift Card'] = false;
-        transformedValue['Type'] = '';//todo
-        transformedValue['Tags'] = '';//todo
+        transformedValue['Type'] = '';//todo - text
+        transformedValue['Tags'] = '';//todo - comma-separated tags e.g.(calculator, 14-digit)
 
         return transformedValue;
     });
 };
+
+/**
+ * 
+ * @param {string} description 
+ */
+function getDescription(description) {
+    const substrings = description.split(/\n/g);
+    let textArray = [];
+    substrings.forEach(text => {
+        textArray.push(`<p class="p1"><span class="s1">${text}</span></p>`);
+    });
+    const result = textArray.join('\n');
+    return result;
+}
